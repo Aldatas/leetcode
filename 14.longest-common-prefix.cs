@@ -7,21 +7,16 @@
 // @lc code=start
 // #define LOCAL
 using System.Formats.Asn1;
+using System.Text;
 
 public class Solution {
-    public bool ContainSameLetterAt(int index, string[] strs)
+    public bool HasSameLetterAt(int index, string[] strs)
     {
-        char letter = ' ';
-        for (int i = 0; i < strs.Length; i++)
+        char letter = strs[0][index];
+        for (int i = 1; i < strs.Length; i++)
         {
-            if (letter == ' ') 
-            {
-                letter = strs[i][index];
-            }
-            else if (letter != strs[i][index])
-            {
+            if (letter != strs[i][index])
                 return false;
-            }
         }
 
         return true;
@@ -29,31 +24,31 @@ public class Solution {
 
     public int GetSmallestLengthInStringArray(string[] strs)
     {
-        int length = 0;
-        for (int i = 0; i < strs.Length; i++)
+        int length = strs[0].Length;
+        for (int i = 1; i < strs.Length; i++)
         {
-            if (i == 0) length = strs[i].Length;
-            if (length > strs[i].Length) length = strs[i].Length;
+            if (length > strs[i].Length) 
+                length = strs[i].Length;
         }
         return length;
     }
 
     public string LongestCommonPrefix(string[] strs) {
+        StringBuilder sb = new();
         int smallestLength = GetSmallestLengthInStringArray(strs);
-        string prefix = "";
         
-        if (smallestLength == 0) return prefix;
+        if (smallestLength == 0) return "";
         
         for (int i = 0; i < smallestLength; i++)
         {
-            if (ContainSameLetterAt(i, strs))
+            if (HasSameLetterAt(i, strs))
             {
-                prefix += strs[0][i];
+                sb.Append(strs[0][i]);
             }
             else break;
         }
 
-        return prefix;
+        return sb.ToString();
     }
 }
 
