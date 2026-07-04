@@ -1,0 +1,79 @@
+name: Local LeetCode Config
+version: 1.0.0
+schema: v1
+
+models:
+  - name: Qwen 3 8B Agent Reasoner
+    provider: ollama
+    model: qwen3:8b
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      contextLength: 4096
+      maxTokens: 2048
+      temperature: 0.2
+      topP: 0.9
+      keepAlive: 1800
+    chatOptions:
+      baseSystemMessage: |
+        You are a precise LeetCode and algorithms coach.
+        Prioritize correctness, complexity analysis, and clear reasoning.
+        Do not jump to code immediately unless asked.
+        For LeetCode problems, explain:
+        1. brute force idea
+        2. optimized idea
+        3. data structure choice
+        4. time and space complexity
+        5. clean implementation
+      baseAgentSystemMessage: |
+        You are a careful local coding agent.
+        Make minimal, targeted edits.
+        Do not rewrite unrelated files.
+        Explain risky assumptions before changing code.
+
+  - name: Qwen 2.5 Coder 7B Code
+    provider: ollama
+    model: qwen2.5-coder:7b
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    defaultCompletionOptions:
+      contextLength: 4096
+      maxTokens: 2048
+      temperature: 0.15
+      topP: 0.9
+      keepAlive: 1800
+
+  - name: Qwen 2.5 Coder 1.5B Autocomplete
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    apiBase: http://localhost:11434
+    roles:
+      - autocomplete
+    defaultCompletionOptions:
+      contextLength: 2048
+      maxTokens: 128
+      temperature: 0.1
+      keepAlive: 1800
+    autocompleteOptions:
+      debounceDelay: 300
+      maxPromptTokens: 1024
+      modelTimeout: 1500
+      onlyMyCode: true
+      useCache: true
+      useImports: true
+      useRecentlyEdited: true
+      useRecentlyOpened: true
+
+  - name: Nomic Embed Text
+    provider: ollama
+    model: nomic-embed-text
+    apiBase: http://localhost:11434
+    roles:
+      - embed
