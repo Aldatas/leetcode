@@ -7,46 +7,37 @@
 // @lc code=start
 public class Solution {
     public bool IsValid(string s) {
-        char p = s.ElementAt(0);
-        bool opening = false;
-        for (int i = 1; i < s.Length; i++)
+        Stack<char> stack = new();
+        Dictionary<char, char> pDict = new Dictionary<char, char>()
         {
-            if (opening)
+            {')', '('},
+            {'}', '{'},
+            {']', '['}
+        };
+        bool completedParenthesis = false;
+        for (int i = 0; i < s.Length; i++)
+        {
+            char openingChar;
+            switch (s.ElementAt(i))
             {
-                p = s.ElementAt(i);
-                opening = false;
-            }
-            else
-            {
-                char closeSymbol;
-                opening = true;
-                switch (p)
-                {
-                    case '(':
-                        {
-                            closeSymbol = ')';
-                            break;
-                        }
-                    case '{':
-                        {
-                            closeSymbol = '}';
-                            break;
-                        }
-                    case '[':
-                        {
-                            closeSymbol = ']';
-                            break;
-                        }
-                    default:
-                        {
-                            return false;
-                        }
-                }
-                if (s.ElementAt(i) != closeSymbol)
-                    return false;
+                case '(':
+                case '{':
+                case '[':  
+                    stack.Push(s.ElementAt(i));
+                    completedParenthesis = false;
+                    break;
+                case ')':
+                case '}':
+                case ']':
+                    stack.TryPop(out openingChar);
+                    if (openingChar != pDict[s.ElementAt(i)]) return false;
+                    completedParenthesis = true;
+                    break;
+                default:
+                        return false;
             }
         }
-
+        if (!completedParenthesis || stack.Count > 0) return false;
         return true;
     }
 }
