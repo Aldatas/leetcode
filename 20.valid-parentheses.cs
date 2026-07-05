@@ -8,37 +8,32 @@
 public class Solution {
     public bool IsValid(string s) {
         Stack<char> stack = new();
-        Dictionary<char, char> pDict = new Dictionary<char, char>()
+
+        foreach (char c in s) 
         {
-            {')', '('},
-            {'}', '{'},
-            {']', '['}
-        };
-        bool completedParenthesis = false;
-        for (int i = 0; i < s.Length; i++)
-        {
-            char openingChar;
-            switch (s.ElementAt(i))
+            switch (c)
             {
                 case '(':
                 case '{':
-                case '[':  
-                    stack.Push(s.ElementAt(i));
-                    completedParenthesis = false;
+                case '[':
+                    stack.Push(c);
                     break;
+
                 case ')':
-                case '}':
-                case ']':
-                    stack.TryPop(out openingChar);
-                    if (openingChar != pDict[s.ElementAt(i)]) return false;
-                    completedParenthesis = true;
+                    if (stack.Count == 0 || stack.Pop() != '(') return false;
                     break;
-                default:
-                        return false;
+
+                case '}':
+                    if (stack.Count == 0 || stack.Pop() != '{') return false;
+                    break;
+
+                case ']':
+                    if (stack.Count == 0 || stack.Pop() != '[') return false;
+                    break;
             }
         }
-        if (!completedParenthesis || stack.Count > 0) return false;
-        return true;
+
+        return stack.Count == 0;
     }
 }
 // @lc code=end
