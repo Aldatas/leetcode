@@ -1,61 +1,106 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+
+class Info
+{
+    public string Title { get; set; }
+    public string Description { get; set; }
+
+    public Info(string title, string description)
+    {
+        Title = title;
+        Description = description;
+    }
+}
 
 class Player
 {
-    private int health  { get; set; }
-    private int mana    { get; set; } 
+    Info info = new Info("Player", "The Hero of this story");
+    public int Health  { get; set; }
+    public int Mana    { get; set; }
+    public List<Spell> Spells { get; set; }
+}
+
+class Spell
+{
+    Info info = new Info("Spell", "N/A");
+    public int ManaCost { get; set; }
+    public int Effect { get; set; }
+    public bool IsAoe { get; set; }
 }
 
 class Dungeon
 {
-    private string title { get; set; }
-    private string description { get; set; }
-
-    private DungeonRoom entranceRoom { get; set; }
+    Info info = new Info("Dungeon", "N/A");
+    public DungeonRoom EntranceRoom { get; set; }
 }
 
 class DungeonRoom
 {
-    private string title       { get; set; }
-    private string description { get; set; }
+    Info info = new Info("DungeonRoom", "N/A");
+    public Dictionary<Direction, DungeonRoom> AdjacentRooms { get; set; } = new Dictionary<string, DungeonRoom>();
+    public Fight Enemies { get; set; }
+}
 
-    private DungeonRoom leftRoom { get; set; }
-    private DungeonRoom rightRoom { get; set; }
-    private DungeonRoom forwardRoom { get; set; }
-    private DungeonRoom previousRoom { get; set; }
+class Enemy
+{
+    Info info = new Info("Enemy", "N/A");
+}
+
+class Fight
+{
+    List<Enemy> enemies;
+    // loot n recovery n stuff
+}
+
+enum Direction
+{
+    North,
+    East,
+    South,
+    West
 }
 
 class Game
 {
+    private Dungeon dungeon;
+    private DungeonRoom currentRoom;
     private Dictionary<char, Action> inputActions = new Dictionary<char, Action>();
-
-    public Game()
+    private Dictionary<char, Direction> keyToDirection = new Dictionary<char, Direction>
     {
-        inputActions['w'] = MoveForward;
-        inputActions['a'] = MoveLeft;
-        inputActions['s'] = MoveBackward;
-        inputActions['d'] = MoveRight;
+        { 'w', Direction.North },
+        { 'a', Direction.West },
+        { 's', Direction.South },
+        { 'd', Direction.East }
+    };
+
+    public Game(Dungeon dungeon)
+    {
+        this.dungeon = dungeon;
+        currentRoom = dungeon.EntranceRoom;
+        InitializeInputActions();
+    }
+
+    public void InitializeInputActions()
+    {
+        foreach (var kvp in keyToDirection)
+        {
+            inputActions[kvp.Key] = () => Move(currentRoom, kvp.Value);
+        }
         inputActions['q'] = QuitGame;
     }
 
-    private void MoveForward()
+    private void Move(DungeonRoom room, Direction direction)
     {
-        
-    }
-
-    private void MoveLeft()
-    {
-        
-    }
-
-    private void MoveBackward()
-    {
-        
-    }
-
-    private void MoveRight()
-    {
-        
+        string directionKey = direction.ToString().ToLower();
+        if (room.AdjacentRooms.ContainsKey(directionKey))
+        {
+            room.AdjacentRooms.TryGetValue(directionKey, room);
+        }
+        else
+        {
+            Console.WriteLine($"No room in {direction}.");
+        }
     }
 
     private void QuitGame()
@@ -65,7 +110,6 @@ class Game
 
     public void RunGame()
     {
-        bool gameRunning = true;
         bool gameRunning = true;
         string screen = "/// LanternPath ///";
         string screenSeparator = "\n--------------------------------\n";
